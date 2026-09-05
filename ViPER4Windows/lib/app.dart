@@ -44,7 +44,7 @@ class _ViperAppState extends State<ViperApp> {
 
     final fluentTheme = FluentThemeData(
       brightness: palette.brightness,
-      accentColor: palette.accent,
+      accentColor: palette.accent.toAccentColor(),
       scaffoldBackgroundColor: palette.background,
       navigationPaneTheme: NavigationPaneThemeData(
         backgroundColor: palette.navBackground,

@@ -166,7 +166,7 @@ class _PresetPageState extends State<PresetPage> {
                 children: [
                   Text(
                     l.saveCurrentSettings,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: AppColors.enabledText,
@@ -200,7 +200,7 @@ class _PresetPageState extends State<PresetPage> {
                     child: TextBox(
                       controller: _nameController,
                       placeholder: l.presetName,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 13,
                         color: AppColors.enabledText,
                       ),
@@ -246,7 +246,7 @@ class _PresetPageState extends State<PresetPage> {
             initiallyExpanded: true,
             header: Text(
               l.navPresets,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: AppColors.enabledText,
@@ -255,7 +255,7 @@ class _PresetPageState extends State<PresetPage> {
             content: state.presetFiles.isEmpty
                 ? Text(
                     l.selectPreset,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
                       color: AppColors.disabledText,
                     ),
@@ -292,7 +292,7 @@ class _PresetPageState extends State<PresetPage> {
           Expanded(
             child: Text(
               name,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
                 color: AppColors.enabledText,
