@@ -1,1 +1,121 @@
+name: Build ViPER4Windows
 
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows:
+    name: Windows release build
+    runs-on: windows-2022
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Set up MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Enable Windows desktop
+        shell: pwsh
+        run: flutter config --enable-windows-desktop
+
+      - name: Install Inno Setup
+        shell: pwsh
+        run: choco install innosetup --no-progress --yes
+
+      - name: Resolve build version
+        id: version
+        shell: pwsh
+        run: |
+          $line = Get-Content 'ViPER4Windows/pubspec.yaml' |
+            Where-Object { $_ -match '^version:\s*' } |
+            Select-Object -First 1
+          if (-not $line) {
+            throw 'Could not find the Flutter application version.'
+          }
+          $version = ($line -split ':', 2)[1].Trim()
+          "version=$version" >> $env:GITHUB_OUTPUT
+          Write-Host "Resolved version: $version"
+
+      - name: Fetch Flutter dependencies
+        working-directory: ViPER4Windows
+        shell: pwsh
+        run: flutter pub get
+
+      - name: Generate localizations
+        working-directory: ViPER4Windows
+        shell: pwsh
+        run: flutter gen-l10n
+
+      - name: Analyze Flutter project
+        working-directory: ViPER4Windows
+        shell: pwsh
+        run: flutter analyze
+
+      - name: Build APO driver
+        shell: pwsh
+        env:
+          VERSION_CODE: ${{ github.run_number }}
+          VERSION_NAME: ${{ steps.version.outputs.version }}
+        run: |
+          $env:CL = '/DVERSION_CODE=' + $env:VERSION_CODE + ' /DVERSION_NAME="' + $env:VERSION_NAME + '"'
+          msbuild .\ViPER4WindowsAPO\ViPER4WindowsAPO.vcxproj /p:Configuration=Release /p:Platform=x64 /m /v:minimal
+
+      - name: Build Flutter Windows app
+        working-directory: ViPER4Windows
+        shell: pwsh
+        run: flutter build windows --release
+
+      - name: Align installer version
+        shell: pwsh
+        env:
+          APP_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          $path = 'Installer\ViPER4Windows.iss'
+          $text = Get-Content -Raw $path
+          $replacement = '#define MyAppVersion "' + $env:APP_VERSION + '"'
+          $text = [regex]::Replace($text, '#define MyAppVersion ".*"', $replacement)
+          Set-Content -Path $path -Value $text -Encoding utf8
+
+      - name: Build installer
+        shell: pwsh
+        run: |
+          $programFilesX86 = [Environment]::GetEnvironmentVariable('ProgramFiles(x86)')
+          $iscc = Join-Path $programFilesX86 'Inno Setup 6\ISCC.exe'
+          if (-not (Test-Path $iscc)) {
+            throw "Inno Setup compiler not found at $iscc"
+          }
+          & $iscc 'Installer\ViPER4Windows.iss'
+
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ViPER4Windows-windows-${{ steps.version.outputs.version }}
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            build/installer/ViPER4Windows_Setup.exe
+            ViPER4Windows/build/windows/x64/runner/Release/**
+            ViPER4WindowsAPO/build/Release/ViPER4WindowsAPO.dll
