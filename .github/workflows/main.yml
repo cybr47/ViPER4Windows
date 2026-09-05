@@ -81,7 +81,7 @@ jobs:
           VERSION_NAME: ${{ steps.version.outputs.version }}
         run: |
           $env:CL = '/DVERSION_CODE=' + $env:VERSION_CODE + ' /DVERSION_NAME="' + $env:VERSION_NAME + '"'
-          msbuild .\ViPER4WindowsAPO\ViPER4WindowsAPO.vcxproj /p:Configuration=Release /p:Platform=x64 /m /v:minimal
+          msbuild .\ViPER4WindowsAPO\ViPER4WindowsAPO.vcxproj /p:Configuration=Release /p:Platform=x64 /p:PlatformToolset=v143 /m /v:minimal
 
       - name: Build Flutter Windows app
         working-directory: ViPER4Windows
