@@ -9,11 +9,14 @@ import 'package:viper4windows/models/viper_state.dart';
 import 'package:viper4windows/services/apo_registration_service.dart';
 import 'package:viper4windows/services/file_logger.dart';
 import 'package:viper4windows/theme/app_colors.dart';
+import 'package:viper4windows/theme/app_icons.dart';
 
 final _log = AppLogger('DriverPage');
 
 class DriverPage extends StatefulWidget {
-  const DriverPage({super.key});
+  const DriverPage({super.key, required this.onLocaleChanged});
+
+  final ValueChanged<Locale> onLocaleChanged;
 
   @override
   State<DriverPage> createState() => _DriverPageState();
@@ -88,7 +91,7 @@ class _DriverPageState extends State<DriverPage> {
               title: Text(ok ? successMessage : failureMessage),
               severity: ok ? InfoBarSeverity.success : InfoBarSeverity.error,
               action: IconButton(
-                icon: const Icon(FluentIcons.clear),
+                icon: const material.Icon(AppIcons.close),
                 onPressed: close,
               ),
             );
@@ -105,7 +108,7 @@ class _DriverPageState extends State<DriverPage> {
               title: Text(S.of(context)!.errorGeneric(e.toString())),
               severity: InfoBarSeverity.error,
               action: IconButton(
-                icon: const Icon(FluentIcons.clear),
+                icon: const material.Icon(AppIcons.close),
                 onPressed: close,
               ),
             );
@@ -168,6 +171,8 @@ class _DriverPageState extends State<DriverPage> {
           ),
         ),
         const SizedBox(height: 16),
+        _buildLanguageCard(),
+        const SizedBox(height: 12),
         _buildThemeCard(state, l),
         const SizedBox(height: 20),
         Text(
@@ -187,6 +192,87 @@ class _DriverPageState extends State<DriverPage> {
         const SizedBox(height: 12),
         _buildStartAtBootCard(l),
       ],
+    );
+  }
+
+  Widget _buildLanguageCard() {
+    final palette = AppColors.current;
+    final locale = Localizations.localeOf(context);
+    final isChinese = locale.languageCode == 'zh';
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: palette.cardBackground,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: palette.cardBorder),
+      ),
+      child: Row(
+        children: [
+          material.Icon(
+            AppIcons.language,
+            size: 22,
+            color: palette.accent,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Language / 語言',
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: palette.enabledText,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  'Choose the interface language / 選擇介面語言',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: palette.subtitleText,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            width: 220,
+            child: DropDownButton(
+              leading: material.Icon(
+                AppIcons.language,
+                size: 18,
+                color: palette.subtitleText,
+              ),
+              title: Text(
+                isChinese ? '中文' : 'English',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: palette.enabledText,
+                ),
+              ),
+              items: [
+                MenuFlyoutItem(
+                  leading: material.Icon(AppIcons.language, size: 18),
+                  text: const Text('繁體中文 / Chinese'),
+                  selected: isChinese,
+                  onPressed: () =>
+                      widget.onLocaleChanged(const Locale('zh', 'TW')),
+                ),
+                MenuFlyoutItem(
+                  leading: material.Icon(AppIcons.language, size: 18),
+                  text: const Text('English / 英文'),
+                  selected: !isChinese,
+                  onPressed: () =>
+                      widget.onLocaleChanged(const Locale('en')),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -231,7 +317,7 @@ class _DriverPageState extends State<DriverPage> {
         children: [
           Row(
             children: [
-              Icon(FluentIcons.color_solid, size: 18, color: palette.accent),
+              material.Icon(AppIcons.palette, size: 20, color: palette.accent),
               const SizedBox(width: 10),
               Expanded(
                 child: Column(
@@ -438,7 +524,7 @@ class _DriverPageState extends State<DriverPage> {
                 )
               else ...[
                 IconButton(
-                  icon: const Icon(FluentIcons.refresh, size: 14),
+                  icon: const material.Icon(AppIcons.refresh, size: 14),
                   onPressed: _refreshEndpoints,
                 ),
                 const SizedBox(width: 8),

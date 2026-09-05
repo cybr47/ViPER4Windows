@@ -31,6 +31,7 @@ class TonePage extends StatelessWidget {
         _buildPsychoBass(state, l),
         _buildViperClarity(state, l),
         _buildSpectrumExtension(state, l),
+        _buildSpeakerOptimization(state, l),
         _buildTubeSimulator(state, l),
         _buildAnalogX(state, l),
       ],
@@ -350,43 +351,67 @@ class TonePage extends StatelessWidget {
     );
   }
 
+  Widget _buildSpeakerOptimization(ViperState state, S l) {
+    return _buildToggleOnlyEffect(
+      title: l.speakerOptimization,
+      enabled: state.active.speakerCorrection.enable,
+      masterEnabled: state.masterEnabled,
+      onToggle: (v) =>
+          state.update((s) => s.speakerCorrection.enable = v),
+    );
+  }
+
   Widget _buildTubeSimulator(ViperState state, S l) {
-    final active = state.active.tubeSimulator.enable && state.masterEnabled;
+    return _buildToggleOnlyEffect(
+      title: l.tubeSimulator,
+      enabled: state.active.tubeSimulator.enable,
+      masterEnabled: state.masterEnabled,
+      onToggle: (v) => state.update((s) => s.tubeSimulator.enable = v),
+    );
+  }
+
+  Widget _buildToggleOnlyEffect({
+    required String title,
+    required bool enabled,
+    required bool masterEnabled,
+    required ValueChanged<bool> onToggle,
+  }) {
+    final palette = AppColors.current;
+    final active = enabled && masterEnabled;
+
     return AnimatedOpacity(
-      opacity: state.masterEnabled ? 1.0 : 0.5,
+      opacity: masterEnabled ? 1.0 : 0.5,
       duration: const Duration(milliseconds: 200),
       child: Container(
         margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: AppColors.cardBackground,
+          color: palette.cardBackground,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: active
-                ? AppColors.accent.withValues(alpha: 0.3)
-                : AppColors.cardBorder,
+                ? palette.accent.withValues(alpha: 0.3)
+                : palette.cardBorder,
           ),
         ),
         child: Row(
           children: [
             Expanded(
               child: Text(
-                l.tubeSimulator,
+                title,
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
-                  color: active
-                      ? AppColors.enabledText
-                      : AppColors.disabledText,
+                  color: active ? palette.enabledText : palette.disabledText,
                 ),
               ),
             ),
             ToggleSwitch(
-              checked: state.active.tubeSimulator.enable,
-              onChanged: state.masterEnabled
-                  ? (v) => state.update((s) => s.tubeSimulator.enable = v)
-                  : null,
+              checked: enabled,
+              onChanged: masterEnabled ? onToggle : null,
             ),
+            // Reserve the same trailing width as EffectCard's Expander chevron.
+            const SizedBox(width: 44),
           ],
         ),
       ),

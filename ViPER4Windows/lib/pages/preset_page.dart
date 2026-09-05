@@ -1,9 +1,11 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/material.dart' as material;
 import 'package:provider/provider.dart';
 import 'package:viper4windows/l10n/app_localizations.dart';
 import 'package:viper4windows/models/viper_state.dart';
 import 'package:viper4windows/theme/app_colors.dart';
+import 'package:viper4windows/theme/app_icons.dart';
 
 class PresetPage extends StatefulWidget {
   const PresetPage({super.key});
@@ -92,7 +94,7 @@ class _PresetPageState extends State<PresetPage> {
                     title: Text(l.presetLoadedTo(name, target)),
                     severity: InfoBarSeverity.success,
                     action: IconButton(
-                      icon: const Icon(FluentIcons.clear),
+                      icon: const material.Icon(AppIcons.close),
                       onPressed: close,
                     ),
                   ),
@@ -283,8 +285,8 @@ class _PresetPageState extends State<PresetPage> {
       ),
       child: Row(
         children: [
-          Icon(
-            FluentIcons.text_document_edit,
+          material.Icon(
+            AppIcons.description,
             size: 14,
             color: AppColors.subtitleText,
           ),
@@ -301,8 +303,8 @@ class _PresetPageState extends State<PresetPage> {
             ),
           ),
           IconButton(
-            icon: Icon(
-              FluentIcons.edit,
+            icon: material.Icon(
+              AppIcons.edit,
               size: 14,
               color: AppColors.subtitleText,
             ),
@@ -310,8 +312,8 @@ class _PresetPageState extends State<PresetPage> {
           ),
           const SizedBox(width: 4),
           IconButton(
-            icon: const Icon(
-              FluentIcons.sync,
+            icon: const material.Icon(
+              AppIcons.sync,
               size: 14,
               color: Color(0xFFB794F6),
             ),
@@ -319,13 +321,13 @@ class _PresetPageState extends State<PresetPage> {
           ),
           const SizedBox(width: 4),
           IconButton(
-            icon: Icon(FluentIcons.download, size: 14, color: AppColors.accent),
+            icon: material.Icon(AppIcons.download, size: 14, color: AppColors.accent),
             onPressed: () => _confirmLoad(state, l, name),
           ),
           const SizedBox(width: 4),
           IconButton(
-            icon: const Icon(
-              FluentIcons.delete,
+            icon: const material.Icon(
+              AppIcons.delete,
               size: 14,
               color: Color(0xFFCF6679),
             ),

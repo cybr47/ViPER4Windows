@@ -1,9 +1,11 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/material.dart' as material;
 import 'package:provider/provider.dart';
 import 'package:viper4windows/l10n/app_localizations.dart';
 import 'package:viper4windows/models/device_settings.dart';
 import 'package:viper4windows/models/viper_state.dart';
 import 'package:viper4windows/theme/app_colors.dart';
+import 'package:viper4windows/theme/app_icons.dart';
 
 class DevicesPage extends StatefulWidget {
   const DevicesPage({super.key});
@@ -83,7 +85,7 @@ class _DevicesPageState extends State<DevicesPage> {
                   title: Text('${l.update}: $deviceName'),
                   severity: InfoBarSeverity.success,
                   action: IconButton(
-                    icon: const Icon(FluentIcons.clear),
+                    icon: const material.Icon(AppIcons.close),
                     onPressed: close,
                   ),
                 ),
@@ -120,7 +122,7 @@ class _DevicesPageState extends State<DevicesPage> {
                   title: Text('${l.load}: $deviceName'),
                   severity: InfoBarSeverity.success,
                   action: IconButton(
-                    icon: const Icon(FluentIcons.clear),
+                    icon: const material.Icon(AppIcons.close),
                     onPressed: close,
                   ),
                 ),
@@ -240,9 +242,9 @@ class _DevicesPageState extends State<DevicesPage> {
             else
               const SizedBox(width: 8),
             const SizedBox(width: 10),
-            Icon(
-              isHeadphone ? FluentIcons.headset : FluentIcons.volume2,
-              size: 16,
+            material.Icon(
+              isHeadphone ? AppIcons.headsetMic : AppIcons.volumeUp,
+              size: 18,
               color: AppColors.subtitleText,
             ),
             const SizedBox(width: 10),
@@ -289,14 +291,14 @@ class _DevicesPageState extends State<DevicesPage> {
               Row(
                 children: [
                   _actionButton(
-                    icon: FluentIcons.download,
+                    icon: AppIcons.download,
                     label: l.load,
                     onPressed: () =>
                         _confirmDeviceLoad(state, l, deviceId, deviceName),
                   ),
                   const SizedBox(width: 16),
                   _actionButton(
-                    icon: FluentIcons.sync,
+                    icon: AppIcons.sync,
                     label: l.update,
                     color: const Color(0xFFB794F6),
                     onPressed: () =>
@@ -304,14 +306,14 @@ class _DevicesPageState extends State<DevicesPage> {
                   ),
                   const SizedBox(width: 16),
                   _actionButton(
-                    icon: FluentIcons.edit,
+                    icon: AppIcons.edit,
                     label: l.deviceRenameTitle,
                     onPressed: () =>
                         _showRenameDialog(state, deviceId, deviceName),
                   ),
                   const SizedBox(width: 16),
                   _actionButton(
-                    icon: FluentIcons.delete,
+                    icon: AppIcons.delete,
                     label: l.delete,
                     onPressed: (isActive || isBuiltIn)
                         ? null
@@ -340,7 +342,7 @@ class _DevicesPageState extends State<DevicesPage> {
     final enabled = onPressed != null;
     final activeColor =
         color ??
-        (icon == FluentIcons.delete
+        (icon == AppIcons.delete
             ? const Color(0xFFCF6679)
             : AppColors.accent);
     return GestureDetector(
@@ -350,7 +352,7 @@ class _DevicesPageState extends State<DevicesPage> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
+            material.Icon(
               icon,
               size: 14,
               color: enabled ? activeColor : AppColors.disabledText,

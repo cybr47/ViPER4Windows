@@ -2,11 +2,13 @@ import 'dart:math';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/material.dart' as material;
 import 'package:provider/provider.dart';
 import 'package:viper4windows/l10n/app_localizations.dart';
 import 'package:viper4windows/models/dynamic_system_preset.dart';
 import 'package:viper4windows/models/viper_state.dart';
 import 'package:viper4windows/theme/app_colors.dart';
+import 'package:viper4windows/theme/app_icons.dart';
 import 'package:viper4windows/widgets/effect_card.dart';
 import 'package:viper4windows/widgets/labeled_slider.dart';
 
@@ -132,12 +134,12 @@ class _DynamicsPageState extends State<DynamicsPage> {
               ),
               const SizedBox(width: 8),
               IconButton(
-                icon: const Icon(FluentIcons.save, size: 14),
+                icon: const material.Icon(AppIcons.save, size: 14),
                 onPressed: () => _showDsSaveDialog(context, state, l),
               ),
               if (_selectedDsPreset >= 1000)
                 IconButton(
-                  icon: Icon(FluentIcons.delete, size: 14, color: Colors.red),
+                  icon: material.Icon(AppIcons.delete, size: 14, color: Colors.red),
                   onPressed: () {
                     final idx = _selectedDsPreset - 1000;
                     if (idx < userPresets.length) {

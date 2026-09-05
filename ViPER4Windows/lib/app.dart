@@ -17,6 +17,7 @@ import 'package:viper4windows/pages/spatial_page.dart';
 import 'package:viper4windows/pages/tone_page.dart';
 import 'package:viper4windows/services/file_logger.dart';
 import 'package:viper4windows/theme/app_colors.dart';
+import 'package:viper4windows/theme/app_icons.dart';
 import 'package:viper4windows/widgets/status_indicator.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -82,6 +83,34 @@ class _ViperAppState extends State<ViperApp> {
       home: material.Theme(
         data: materialTheme,
         child: _Shell(onLocaleChanged: _setLocale),
+      ),
+    );
+  }
+}
+
+class _MaterialPaneToggleButton extends StatelessWidget {
+  const _MaterialPaneToggleButton();
+
+  @override
+  Widget build(BuildContext context) {
+    final view = NavigationView.dataOf(context);
+    final compactWidth = view.pane?.size?.compactWidth ?? 50.0;
+
+    return SizedBox(
+      width: compactWidth,
+      child: Padding(
+        padding: const EdgeInsetsDirectional.symmetric(horizontal: 6),
+        child: Tooltip(
+          message: 'Toggle navigation',
+          child: IconButton(
+            icon: material.Icon(
+              AppIcons.menu,
+              size: 22,
+              color: AppColors.current.enabledText,
+            ),
+            onPressed: () => NavigationView.maybeOf(context)?.togglePane(),
+          ),
+        ),
       ),
     );
   }
@@ -297,7 +326,6 @@ class _ShellState extends State<_Shell> with WindowListener {
                   ],
                 ),
               ),
-            _buildLanguageMenu(context),
             const SizedBox(width: 8),
             _buildMasterToggle(state, l),
             const SizedBox(width: 8),
@@ -308,79 +336,50 @@ class _ShellState extends State<_Shell> with WindowListener {
         selected: _selectedIndex,
         onChanged: (i) => setState(() => _selectedIndex = i),
         displayMode: PaneDisplayMode.compact,
+        toggleButton: const _MaterialPaneToggleButton(),
         size: const NavigationPaneSize(compactWidth: 48, openWidth: 180),
         items: [
           PaneItem(
-            icon: Icon(FluentIcons.volume2, size: 16.0),
+            icon: material.Icon(AppIcons.volumeUp, size: 18),
             title: Text(l.navOutput),
             body: const OutputPage(),
           ),
           PaneItem(
-            icon: Icon(FluentIcons.equalizer, size: 16.0),
+            icon: material.Icon(AppIcons.tune, size: 18),
             title: Text(l.navEqualizer),
             body: const EqualizerPage(),
           ),
           PaneItem(
-            icon: Icon(FluentIcons.music_note, size: 16.0),
+            icon: material.Icon(AppIcons.musicNote, size: 18),
             title: Text(l.navTone),
             body: const TonePage(),
           ),
           PaneItem(
-            icon: Icon(FluentIcons.communications, size: 16.0),
+            icon: material.Icon(AppIcons.spatialAudio, size: 18),
             title: Text(l.navSpatial),
             body: const SpatialPage(),
           ),
           PaneItem(
-            icon: Icon(FluentIcons.charticulator_linking_sequence, size: 16.0),
+            icon: material.Icon(AppIcons.cadence, size: 18),
             title: Text(l.navDynamics),
             body: const DynamicsPage(),
           ),
         ],
         footerItems: [
           PaneItem(
-            icon: Icon(FluentIcons.speakers, size: 16.0),
+            icon: material.Icon(AppIcons.devices, size: 18),
             title: Text(l.navDevices),
             body: const DevicesPage(),
           ),
           PaneItem(
-            icon: Icon(FluentIcons.documentation, size: 16.0),
+            icon: material.Icon(AppIcons.fileSave, size: 18),
             title: Text(l.navPresets),
             body: const PresetPage(),
           ),
           PaneItem(
-            icon: Icon(FluentIcons.settings, size: 16.0),
+            icon: material.Icon(AppIcons.settings, size: 18),
             title: Text(l.navSettings),
-            body: const DriverPage(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLanguageMenu(BuildContext context) {
-    final locale = Localizations.localeOf(context);
-    final isChinese = locale.languageCode == 'zh';
-
-    return Tooltip(
-      message: 'Language / 語言',
-      child: DropDownButton(
-        leading: const Icon(FluentIcons.locale_language, size: 14),
-        title: Text(
-          isChinese ? '中文' : 'English',
-          style: const TextStyle(fontSize: 11),
-        ),
-        items: [
-          MenuFlyoutItem(
-            leading: const Icon(FluentIcons.locale_language, size: 14),
-            text: const Text('繁體中文 / Chinese'),
-            selected: isChinese,
-            onPressed: () => widget.onLocaleChanged(const Locale('zh', 'TW')),
-          ),
-          MenuFlyoutItem(
-            leading: const Icon(FluentIcons.locale_language, size: 14),
-            text: const Text('English / 英文'),
-            selected: !isChinese,
-            onPressed: () => widget.onLocaleChanged(const Locale('en')),
+            body: DriverPage(onLocaleChanged: widget.onLocaleChanged),
           ),
         ],
       ),

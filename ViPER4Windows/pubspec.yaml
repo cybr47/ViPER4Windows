@@ -12,6 +12,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   fluent_ui: 4.16.1
+  material_symbols_icons: ^4.2960.0
   ffi: 2.2.0
   window_manager: 0.5.2
   system_tray: 2.0.3
