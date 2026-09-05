@@ -259,15 +259,21 @@ class _DriverPageState extends State<DriverPage> {
             ],
           ),
           const SizedBox(height: 12),
-          Row(
-            children: [
-              for (var i = 0; i < options.length; i++) ...[
-                Expanded(
-                  child: _buildThemeOption(state, options[i]),
-                ),
-                if (i < options.length - 1) const SizedBox(width: 8),
+          material.RadioGroup<ViperThemeMode>(
+            groupValue: state.themeMode,
+            onChanged: (value) {
+              if (value != null) state.themeMode = value;
+            },
+            child: Row(
+              children: [
+                for (var i = 0; i < options.length; i++) ...[
+                  Expanded(
+                    child: _buildThemeOption(state, options[i]),
+                  ),
+                  if (i < options.length - 1) const SizedBox(width: 8),
+                ],
               ],
-            ],
+            ),
           ),
         ],
       ),
