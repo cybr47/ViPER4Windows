@@ -1,6 +1,7 @@
 import 'dart:ffi' hide Size;
 
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/material.dart' as material;
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:system_tray/system_tray.dart';
@@ -19,8 +20,6 @@ import 'package:viper4windows/theme/app_colors.dart';
 import 'package:viper4windows/widgets/status_indicator.dart';
 import 'package:window_manager/window_manager.dart';
 
-const _deepBg = Color(0xFF1A1A2E);
-const _navBg = Color(0xFF0F3460);
 final _log = AppLogger('App');
 
 class ViperApp extends StatefulWidget {
@@ -39,6 +38,30 @@ class _ViperAppState extends State<ViperApp> {
 
   @override
   Widget build(BuildContext context) {
+    final state = context.watch<ViperState>();
+    final palette = AppColors.paletteFor(state.themeMode);
+    AppColors.configure(palette);
+
+    final fluentTheme = FluentThemeData(
+      brightness: palette.brightness,
+      accentColor: palette.accent,
+      scaffoldBackgroundColor: palette.background,
+      navigationPaneTheme: NavigationPaneThemeData(
+        backgroundColor: palette.navBackground,
+        highlightColor: palette.navHighlight,
+      ),
+      fontFamily: 'Inter',
+    );
+    final materialTheme = material.ThemeData(
+      useMaterial3: true,
+      brightness: palette.brightness,
+      colorScheme: material.ColorScheme.fromSeed(
+        seedColor: palette.accent,
+        brightness: palette.brightness,
+      ),
+      fontFamily: 'Inter',
+    );
+
     return FluentApp(
       title: 'ViPER4Windows',
       debugShowCheckedModeBanner: false,
@@ -51,18 +74,15 @@ class _ViperAppState extends State<ViperApp> {
         FluentLocalizations.delegate,
       ],
       supportedLocales: S.supportedLocales,
-      themeMode: ThemeMode.dark,
-      darkTheme: FluentThemeData(
-        brightness: Brightness.dark,
-        accentColor: Colors.purple,
-        scaffoldBackgroundColor: _deepBg,
-        navigationPaneTheme: NavigationPaneThemeData(
-          backgroundColor: _navBg,
-          highlightColor: AppColors.accent,
-        ),
-        fontFamily: 'Inter',
+      theme: fluentTheme,
+      darkTheme: fluentTheme,
+      themeMode: palette.brightness == Brightness.light
+          ? ThemeMode.light
+          : ThemeMode.dark,
+      home: material.Theme(
+        data: materialTheme,
+        child: _Shell(onLocaleChanged: _setLocale),
       ),
-      home: _Shell(onLocaleChanged: _setLocale),
     );
   }
 }
@@ -288,7 +308,7 @@ class _ShellState extends State<_Shell> with WindowListener {
         selected: _selectedIndex,
         onChanged: (i) => setState(() => _selectedIndex = i),
         displayMode: PaneDisplayMode.compact,
-        size: const NavigationPaneSize(compactWidth: 40, openWidth: 180),
+        size: const NavigationPaneSize(compactWidth: 48, openWidth: 180),
         items: [
           PaneItem(
             icon: Icon(FluentIcons.volume2, size: 16.0),
@@ -328,8 +348,8 @@ class _ShellState extends State<_Shell> with WindowListener {
             body: const PresetPage(),
           ),
           PaneItem(
-            icon: Icon(FluentIcons.info, size: 16.0),
-            title: Text(l.navDriverStatus),
+            icon: Icon(FluentIcons.settings, size: 16.0),
+            title: Text(l.navSettings),
             body: const DriverPage(),
           ),
         ],

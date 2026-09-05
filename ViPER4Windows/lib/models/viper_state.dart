@@ -15,6 +15,7 @@ import 'package:viper4windows/services/file_logger.dart';
 import 'package:viper4windows/services/profile_file_manager.dart';
 import 'package:viper4windows/services/settings_service.dart';
 import 'package:viper4windows/services/shared_memory_service.dart';
+import 'package:viper4windows/theme/app_colors.dart';
 
 final _log = AppLogger('ViperState');
 
@@ -1359,6 +1360,7 @@ class ViperState extends ChangeNotifier {
   final ModeState _active = ModeState();
 
   bool _masterEnabled = true;
+  ViperThemeMode _themeMode = ViperThemeMode.materialDark;
   String _currentDeviceId = '';
   String _currentDeviceName = '';
 
@@ -1395,6 +1397,7 @@ class ViperState extends ChangeNotifier {
   ModeState get active => _active;
 
   bool get masterEnabled => _masterEnabled;
+  ViperThemeMode get themeMode => _themeMode;
   bool get isCurrentDeviceHeadphone => _isCurrentDeviceHeadphone;
   String get currentDeviceId => _currentDeviceId;
   String get currentDeviceName => _currentDeviceName;
@@ -1417,6 +1420,13 @@ class ViperState extends ChangeNotifier {
       pushParams();
       _scheduleSave();
     }
+  }
+
+  set themeMode(ViperThemeMode value) {
+    if (_themeMode == value) return;
+    _themeMode = value;
+    notifyListeners();
+    if (!_suppressPush) _scheduleSave();
   }
 
   set masterEnabled(bool v) {
@@ -1750,7 +1760,9 @@ class ViperState extends ChangeNotifier {
 
   Future<void> saveSettings() async {
     final data = <String, dynamic>{
-      'schemaVersion': 2,
+      'schemaVersion': 3,
+      'masterEnabled': _masterEnabled,
+      'themeMode': _themeMode.name,
       'preset': _active.toJson(),
     };
     await _settings.save(data);
@@ -1760,7 +1772,9 @@ class ViperState extends ChangeNotifier {
   void saveSettingsSync() {
     _saveCurrentDeviceSettings();
     final data = <String, dynamic>{
-      'schemaVersion': 2,
+      'schemaVersion': 3,
+      'masterEnabled': _masterEnabled,
+      'themeMode': _themeMode.name,
       'preset': _active.toJson(),
     };
     _settings.saveSync(data);
@@ -2027,6 +2041,14 @@ class ViperState extends ChangeNotifier {
 
     _suppressPush = true;
     _masterEnabled = data['masterEnabled'] as bool? ?? _masterEnabled;
+
+    final savedTheme = data['themeMode'];
+    if (savedTheme is String) {
+      _themeMode = ViperThemeMode.values.firstWhere(
+        (mode) => mode.name == savedTheme,
+        orElse: () => ViperThemeMode.materialDark,
+      );
+    }
 
     final preset = data['preset'];
     if (preset is Map<String, dynamic>) {

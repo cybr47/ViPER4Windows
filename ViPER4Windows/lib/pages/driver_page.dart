@@ -1,6 +1,8 @@
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/material.dart' as material;
 import 'package:provider/provider.dart';
 import 'package:viper4windows/l10n/app_localizations.dart';
 import 'package:viper4windows/models/viper_state.dart';
@@ -147,17 +149,36 @@ class _DriverPageState extends State<DriverPage> {
     final l = S.of(context)!;
 
     return ScaffoldPage.scrollable(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
       children: [
         Text(
-          l.pageDriverStatus,
+          l.settingsTitle,
           style: TextStyle(
-            fontSize: 22,
+            fontSize: 28,
             fontWeight: FontWeight.w700,
-            color: AppColors.accent,
+            color: AppColors.enabledText,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          l.settingsSubtitle,
+          style: TextStyle(
+            fontSize: 13,
+            color: AppColors.subtitleText,
           ),
         ),
         const SizedBox(height: 16),
+        _buildThemeCard(state, l),
+        const SizedBox(height: 20),
+        Text(
+          l.driverStatus,
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            color: AppColors.enabledText,
+          ),
+        ),
+        const SizedBox(height: 10),
         _buildStatusCard(state, l),
         const SizedBox(height: 12),
         _buildEndpointsCard(l),
@@ -169,12 +190,170 @@ class _DriverPageState extends State<DriverPage> {
     );
   }
 
+  List<_ThemeOption> _themeOptions(S l) {
+    return [
+      _ThemeOption(
+        mode: ViperThemeMode.materialDark,
+        label: l.themeMaterialDark,
+        description: l.themeMaterialDarkDescription,
+      ),
+      _ThemeOption(
+        mode: ViperThemeMode.materialLight,
+        label: l.themeMaterialLight,
+        description: l.themeMaterialLightDescription,
+      ),
+      _ThemeOption(
+        mode: ViperThemeMode.monochrome,
+        label: l.themeMonochrome,
+        description: l.themeMonochromeDescription,
+      ),
+      _ThemeOption(
+        mode: ViperThemeMode.amoled,
+        label: l.themeAmoled,
+        description: l.themeAmoledDescription,
+      ),
+    ];
+  }
+
+  Widget _buildThemeCard(ViperState state, S l) {
+    final palette = AppColors.current;
+    final options = _themeOptions(l);
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+      decoration: BoxDecoration(
+        color: palette.cardBackground,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: palette.cardBorder),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(FluentIcons.color_solid, size: 18, color: palette.accent),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l.theme,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: palette.enabledText,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      l.themeDescription,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: palette.subtitleText,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              for (var i = 0; i < options.length; i++) ...[
+                Expanded(
+                  child: _buildThemeOption(state, options[i]),
+                ),
+                if (i < options.length - 1) const SizedBox(width: 8),
+              ],
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildThemeOption(ViperState state, _ThemeOption option) {
+    final palette = AppColors.paletteFor(option.mode);
+    final selected = state.themeMode == option.mode;
+
+    return material.Material(
+      type: material.MaterialType.transparency,
+      child: material.InkWell(
+        borderRadius: BorderRadius.circular(14),
+        onTap: () => state.themeMode = option.mode,
+        child: Container(
+          height: 72,
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          decoration: BoxDecoration(
+            color: selected
+                ? palette.accent.withValues(alpha: 0.12)
+                : palette.cardBackground,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: selected
+                  ? palette.accent.withValues(alpha: 0.72)
+                  : AppColors.cardBorder,
+              width: selected ? 1.5 : 1,
+            ),
+          ),
+          child: Row(
+            children: [
+              CustomPaint(
+                size: const Size(34, 34),
+                painter: _ThemePreviewPainter(palette),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      option.label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: palette.enabledText,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      option.description,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 10,
+                        height: 1.15,
+                        color: palette.subtitleText,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              material.Radio<ViperThemeMode>(
+                value: option.mode,
+                groupValue: state.themeMode,
+                onChanged: (value) {
+                  if (value != null) state.themeMode = value;
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildStatusCard(ViperState state, S l) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.cardBackground,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppColors.cardBorder),
       ),
       child: Column(
@@ -232,7 +411,7 @@ class _DriverPageState extends State<DriverPage> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.cardBackground,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppColors.cardBorder),
       ),
       child: Column(
@@ -272,7 +451,7 @@ class _DriverPageState extends State<DriverPage> {
           if (_endpoints.isEmpty && !_loading)
             Text(
               l.noEndpointsFound,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
                 color: AppColors.disabledText,
               ),
@@ -310,7 +489,7 @@ class _DriverPageState extends State<DriverPage> {
                       children: [
                         Text(
                           ep.name,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
                             color: AppColors.enabledText,
@@ -350,7 +529,7 @@ class _DriverPageState extends State<DriverPage> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.cardBackground,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppColors.cardBorder),
       ),
       child: Column(
@@ -385,14 +564,14 @@ class _DriverPageState extends State<DriverPage> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
         color: AppColors.cardBackground,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppColors.cardBorder),
       ),
       child: Row(
         children: [
           Text(
             l.startAtBoot,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w500,
               color: AppColors.enabledText,
@@ -417,7 +596,7 @@ class _DriverPageState extends State<DriverPage> {
             width: 120,
             child: Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
                 color: AppColors.subtitleText,
               ),
@@ -444,7 +623,7 @@ class _DriverPageState extends State<DriverPage> {
           ],
           Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w500,
               color: AppColors.enabledText,
@@ -464,7 +643,7 @@ class _DriverPageState extends State<DriverPage> {
             width: 120,
             child: Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
                 color: AppColors.subtitleText,
               ),
@@ -473,7 +652,7 @@ class _DriverPageState extends State<DriverPage> {
           const Spacer(),
           Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w500,
               color: AppColors.enabledText,
@@ -482,5 +661,59 @@ class _DriverPageState extends State<DriverPage> {
         ],
       ),
     );
+  }
+}
+
+
+class _ThemeOption {
+  const _ThemeOption({
+    required this.mode,
+    required this.label,
+    required this.description,
+  });
+
+  final ViperThemeMode mode;
+  final String label;
+  final String description;
+}
+
+class _ThemePreviewPainter extends CustomPainter {
+  const _ThemePreviewPainter(this.palette);
+
+  final AppPalette palette;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.shortestSide / 2;
+    final bounds = Rect.fromCircle(center: center, radius: radius);
+    final paint = Paint()..style = PaintingStyle.fill;
+    final colors = <Color>[
+      palette.background,
+      palette.accent,
+      palette.cardBackground,
+    ];
+
+    for (var i = 0; i < colors.length; i++) {
+      paint.color = colors[i];
+      canvas.drawArc(
+        bounds,
+        -math.pi / 2 + (i * 2 * math.pi / 3),
+        2 * math.pi / 3,
+        true,
+        paint,
+      );
+    }
+
+    paint
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1
+      ..color = palette.cardBorder;
+    canvas.drawCircle(center, radius - 0.5, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _ThemePreviewPainter oldDelegate) {
+    return oldDelegate.palette != palette;
   }
 }

@@ -188,7 +188,7 @@ class _DevicesPageState extends State<DevicesPage> {
         if (devices.isEmpty)
           Text(
             l.deviceNoDevices,
-            style: const TextStyle(fontSize: 13, color: AppColors.disabledText),
+            style: TextStyle(fontSize: 13, color: AppColors.disabledText),
           )
         else
           for (final device in devices) _buildDeviceRow(state, device, l),
@@ -252,7 +252,7 @@ class _DevicesPageState extends State<DevicesPage> {
                 children: [
                   Text(
                     deviceName,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
                       color: AppColors.enabledText,
@@ -261,7 +261,7 @@ class _DevicesPageState extends State<DevicesPage> {
                   if (!isActive)
                     Text(
                       _formatTimeAgo(lastConnected),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 11,
                         color: AppColors.disabledText,
                       ),
@@ -378,7 +378,7 @@ class _DevicesPageState extends State<DevicesPage> {
             width: 80,
             child: Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 11,
                 color: AppColors.subtitleText,
               ),
@@ -387,7 +387,7 @@ class _DevicesPageState extends State<DevicesPage> {
           Flexible(
             child: Text(
               value,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 11,
                 color: AppColors.enabledText,
               ),

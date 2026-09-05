@@ -285,5 +285,19 @@
   "dsDeviceExtremeHeadphoneV1": "極致耳機（v1）",
   "dsDeviceHighEndHeadphoneV1": "高階耳機（v1）",
   "dsDeviceCommonHeadphoneV1": "一般耳機（v1）",
-  "dsDeviceCommonEarphoneV1": "一般耳塞（v1）"
+  "dsDeviceCommonEarphoneV1": "一般耳塞（v1）",
+  "navSettings": "設定",
+  "settingsTitle": "設定",
+  "settingsSubtitle": "外觀與啟動選項",
+  "theme": "主題",
+  "themeDescription": "選擇 ViPER4Windows 的外觀",
+  "themeMaterialDark": "Material 深色",
+  "themeMaterialDarkDescription": "Google Material 3 深色表面",
+  "themeMaterialLight": "Material 淺色",
+  "themeMaterialLightDescription": "明亮的 Material 3 表面",
+  "themeMonochrome": "單色",
+  "themeMonochromeDescription": "灰色背景搭配米白色控制項",
+  "themeAmoled": "AMOLED",
+  "themeAmoledDescription": "OLED 顯示器的純黑背景",
+  "driverStatus": "驅動狀態"
 }

@@ -285,5 +285,19 @@
   "dsDeviceExtremeHeadphoneV1": "Extreme Headphone (v1)",
   "dsDeviceHighEndHeadphoneV1": "High-End Headphone (v1)",
   "dsDeviceCommonHeadphoneV1": "Common Headphone (v1)",
-  "dsDeviceCommonEarphoneV1": "Common Earphone (v1)"
+  "dsDeviceCommonEarphoneV1": "Common Earphone (v1)",
+  "navSettings": "Settings",
+  "settingsTitle": "Settings",
+  "settingsSubtitle": "Appearance and startup",
+  "theme": "Theme",
+  "themeDescription": "Choose the look of ViPER4Windows",
+  "themeMaterialDark": "Material Dark",
+  "themeMaterialDarkDescription": "Google Material 3 dark surfaces",
+  "themeMaterialLight": "Material Light",
+  "themeMaterialLightDescription": "Bright Material 3 surfaces",
+  "themeMonochrome": "Monochrome",
+  "themeMonochromeDescription": "Soft grey with off-white controls",
+  "themeAmoled": "AMOLED",
+  "themeAmoledDescription": "Pure black for OLED displays",
+  "driverStatus": "Driver Status"
 }

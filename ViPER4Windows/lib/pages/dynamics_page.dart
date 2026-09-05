@@ -74,7 +74,7 @@ class _DynamicsPageState extends State<DynamicsPage> {
           value: i,
           child: Text(
             DsDevices.builtins[i].nameOf(l),
-            style: const TextStyle(fontSize: 12),
+            style: TextStyle(fontSize: 12),
           ),
         ),
       ),
@@ -111,7 +111,7 @@ class _DynamicsPageState extends State<DynamicsPage> {
                   value: _selectedDsPreset == -1 ? null : _selectedDsPreset,
                   placeholder: Text(
                     l.custom,
-                    style: const TextStyle(fontSize: 12),
+                    style: TextStyle(fontSize: 12),
                   ),
                   items: items,
                   onChanged: (v) {
@@ -438,7 +438,7 @@ class _DynamicsPageState extends State<DynamicsPage> {
                   ),
                   child: Text(
                     _mbcBandNames[i],
-                    style: const TextStyle(fontSize: 11),
+                    style: TextStyle(fontSize: 11),
                   ),
                 ),
               );
@@ -1012,7 +1012,7 @@ class _DynamicsPageState extends State<DynamicsPage> {
           const SizedBox(width: 8),
           Text(
             label,
-            style: const TextStyle(fontSize: 12, color: AppColors.subtitleText),
+            style: TextStyle(fontSize: 12, color: AppColors.subtitleText),
           ),
         ],
       ),

@@ -161,7 +161,7 @@ class _EqualizerPageState extends State<EqualizerPage> {
               child: SizedBox(
                 width: 30,
                 child: Center(
-                  child: Text('$count', style: const TextStyle(fontSize: 12)),
+                  child: Text('$count', style: TextStyle(fontSize: 12)),
                 ),
               ),
             ),
@@ -333,7 +333,7 @@ class _EqualizerPageState extends State<EqualizerPage> {
             cursor: SystemMouseCursors.click,
             child: Text(
               clamped.toStringAsFixed(1),
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 9,
                 color: AppColors.accent,
                 fontFamily: 'Inter',
@@ -366,7 +366,7 @@ class _EqualizerPageState extends State<EqualizerPage> {
         const SizedBox(height: 2),
         Text(
           label,
-          style: const TextStyle(fontSize: 10, color: AppColors.disabledText),
+          style: TextStyle(fontSize: 10, color: AppColors.disabledText),
         ),
       ],
     );
@@ -497,7 +497,7 @@ class _EqualizerPageState extends State<EqualizerPage> {
                         children: [
                           Text(
                             _dynEqFreqLabel(state.active.dynamicEq.freqs[i]),
-                            style: const TextStyle(fontSize: 11),
+                            style: TextStyle(fontSize: 11),
                           ),
                           if (bandCount > 1) ...[
                             const SizedBox(width: 4),
