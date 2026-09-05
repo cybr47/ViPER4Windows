@@ -342,10 +342,6 @@ class _DriverPageState extends State<DriverPage> {
               ),
               material.Radio<ViperThemeMode>(
                 value: option.mode,
-                groupValue: state.themeMode,
-                onChanged: (value) {
-                  if (value != null) state.themeMode = value;
-                },
               ),
             ],
           ),
