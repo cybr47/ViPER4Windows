@@ -301,7 +301,7 @@ class _PresetPageState extends State<PresetPage> {
             ),
           ),
           IconButton(
-            icon: const Icon(
+            icon: Icon(
               FluentIcons.edit,
               size: 14,
               color: AppColors.subtitleText,
